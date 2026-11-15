@@ -5,24 +5,47 @@ import 'package:uuid/uuid.dart';
 
 class User {
   final String id;
-  final String name;
   final UserProfile profile;
   final UserMetrics metrics;
 
   User({
     String? id,
-    String? name,
     UserProfile? profile,
     UserMetrics? metrics,
-    int? age,
+    String? firstName,
+    String? lastName,
+    String? displayName,
+    DateTime? dateOfBirth,
     Gender? gender,
   }) : id = id ?? const Uuid().v4(),
-       name = name ?? "User",
        profile =
            profile ??
            UserProfile(
-             age: age,
-             gender: gender,
+              firstName: firstName,
+              lastName: lastName,
+              displayName: displayName,
+              dateOfBirth: dateOfBirth,
+              gender: gender,
            ), // put value inside will override the existing one, be careful!
        metrics = metrics ?? UserMetrics();
+  
+  Map<String, dynamic> toJson() {
+    return {
+      "id": id,
+      "profile": profile.toJson(),
+      "metrics": metrics.toJson(),
+    };
+  }
+
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      id: json['id'] as String,
+      profile: UserProfile.fromJson(
+        Map<String, dynamic>.from(json['profile'] as Map),
+      ),
+      metrics: UserMetrics.fromJson(
+        Map<String, dynamic>.from(json['metrics'] as Map),
+      )
+    );
+  }
 }

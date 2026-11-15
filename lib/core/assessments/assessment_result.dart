@@ -1,7 +1,7 @@
 import 'package:attention/core/assessments/assessment_session.dart';
 
 class AssessmentResult {
-  final AssessionSession session;
+  final AssessmentSession session;
   final Map rawMetrics;
   final Map calculatedMetrics;
 
