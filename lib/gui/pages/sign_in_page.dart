@@ -80,7 +80,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        minimum: EdgeInsets.all(20),
+        minimum: EdgeInsets.all(30),
         child: Column(
           spacing: 10,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -122,7 +122,9 @@ class _SignInPageState extends ConsumerState<SignInPage> {
               onPressed: _continueButtonEnabled
                   ? () {
                       if (_currentStep == _maxStep) {
-                        ref.read(appStateDataProvider.notifier).setState(AppState.home);
+                        ref
+                            .read(appStateDataProvider.notifier)
+                            .setState(AppState.home);
                       } else if (_currentStep == _maxStep - 1) {
                         User user = User(
                           firstName: _firstNameController.text,
@@ -135,7 +137,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                         setState(() {
                           _currentStep++;
                         });
-                        UserStorage.save(user);                       
+                        UserStorage.save(user);
                       } else {
                         setState(() {
                           _currentStep++;
@@ -263,15 +265,18 @@ class _SignInPageState extends ConsumerState<SignInPage> {
   Column _step4() {
     return Column(
       spacing: 10,
+      crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Text("Recheck your infomation", style: TextStyle(fontSize: 20)),
         Divider(),
-        Text("${_firstNameController.text} ${_lastNameController.text}"),
-        Text(_displayNameController.text),
-        Text(_selectedGender.label),
         Text(
-          "${_dateOfBirth.year.toString()}-${_dateOfBirth.month.toString()}-${_dateOfBirth.day.toString()}",
+          "Full name\n${_firstNameController.text} ${_lastNameController.text}",
+        ),
+        Text("Nickname\n${_displayNameController.text}"),
+        Text("Gender\n${_selectedGender.label}"),
+        Text(
+          "Birthday\n${_dateOfBirth.year.toString()}-${_dateOfBirth.month.toString()}-${_dateOfBirth.day.toString()}",
         ),
         Divider(),
         Text("Once you press 'Continue', this can't be undone!"),
@@ -284,9 +289,12 @@ class _SignInPageState extends ConsumerState<SignInPage> {
       spacing: 10,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Icon(Icons.celebration_rounded, size: 100,),
+        Icon(Icons.celebration_rounded, size: 100),
         Text("All done!", style: TextStyle(fontSize: 40)),
-        Text("Welcome to Attention, ${ref.read(appStateDataProvider).user?.profile.displayName}.", style: TextStyle(fontSize: 20)),
+        Text(
+          "Welcome to Attention, ${ref.read(appStateDataProvider).user?.profile.displayName}.",
+          style: TextStyle(fontSize: 20),
+        ),
       ],
     );
   }

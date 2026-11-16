@@ -1,8 +1,7 @@
-import 'package:attention/core/enums/app_state.dart';
-import 'package:attention/core/providers/app_state_data_provider.dart';
-import 'package:attention/core/user/user_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:attention/core/providers/app_state_data_provider.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -24,7 +23,7 @@ class HomePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       body: SafeArea(
-        minimum: EdgeInsets.all(20),
+        minimum: EdgeInsets.all(30),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           spacing: 10,
@@ -36,13 +35,9 @@ class HomePage extends ConsumerWidget {
                   spacing: 10,
                   children: [
                     PopupMenuButton(
-                      onSelected: (value) {
+                      onSelected: (value) async {
                         if (value == "reset") {
-                          UserStorage.delete();
-                          ref.read(appStateDataProvider.notifier).setUser(null);
-                          ref
-                              .read(appStateDataProvider.notifier)
-                              .setState(AppState.createUser);
+                          ref.read(appStateDataProvider.notifier).resetUser();
                         }
                       },
                       icon: const Icon(Icons.person),
@@ -80,31 +75,31 @@ class HomePage extends ConsumerWidget {
                   "ATTENTION",
                   style: TextStyle(fontFamily: "Anton", fontSize: 50),
                 ),
-                Expanded(child: Container(
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    spacing: 20,
-                    children: [
-                      Text(
-                        "Your score",
-                        style: TextStyle(
-                          fontSize: 20,
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      spacing: 20,
+                      children: [
+                        Text("AS Score", style: TextStyle(fontSize: 20)),
+                        Text(
+                          ref
+                                  .read(appStateDataProvider)
+                                  .user
+                                  ?.metrics
+                                  .currentASScore
+                                  .toString() ??
+                              "???",
+                          style: TextStyle(fontSize: 35, fontFamily: "Anton"),
                         ),
-                      ),
-                      Text(
-                        ref.read(appStateDataProvider).user?.metrics.currentASScore.toString() ?? "???",
-                        style: TextStyle(
-                          fontSize: 35,
-                          fontFamily: "Anton"
-                        ),
-                      )
-                    ],
+                      ],
+                    ),
                   ),
-                ))
+                ),
               ],
             ),
             Expanded(
@@ -119,21 +114,47 @@ class HomePage extends ConsumerWidget {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadiusGeometry.circular(20),
                         ),
-                        textStyle: TextStyle(fontSize: 70, fontFamily: "Anton"),
+                        textStyle: TextStyle(fontSize: 65, fontFamily: "Anton"),
                       ),
-                      child: Text("ASSESS"),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("ASSESS"),
+                          Text(
+                            "Evaluate your AS (Attention Score) using certain designed activities.\nEstimated time: 10 - 15 minutes",
+                            style: TextStyle(
+                              fontFamily: "IBM Plex Sans Thai",
+                              fontSize: 16,
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: null,
                       style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadiusGeometry.circular(20),
                         ),
-                        textStyle: TextStyle(fontSize: 70, fontFamily: "Anton"),
+                        textStyle: TextStyle(fontSize: 65, fontFamily: "Anton"),
                       ),
-                      child: Text("PRACTICE"),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("PRACTICE"),
+                          Text(
+                            "Train your attention span at anytime from anywhere without messing with your AS (Attention Score).\nEstimated time: 3 - 5 minutes",
+                            style: TextStyle(
+                              fontFamily: "IBM Plex Sans Thai",
+                              fontSize: 16,
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],

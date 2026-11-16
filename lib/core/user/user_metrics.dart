@@ -5,7 +5,7 @@ class UserMetrics {
   UserMetrics({
     int? currentASScore,
   }) :
-    currentASScore = currentASScore ?? 0;
+    currentASScore = currentASScore ?? 250; // Starting score
 
   Map<String, dynamic> toJson() {
     return {

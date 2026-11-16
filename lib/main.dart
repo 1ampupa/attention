@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:attention/core/app_state_data/app_state_data.dart';
@@ -10,6 +11,11 @@ import 'package:attention/gui/pages/sign_in_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Set portrait mode
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp
+  ]);
 
   runApp(ProviderScope(child: AttentionApp()));
 }

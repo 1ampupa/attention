@@ -5,18 +5,15 @@ import 'package:attention/core/user/user_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AppStateDataProvider extends Notifier<AppStateData> {
-
   @override
-  AppStateData build() => AppStateData(); 
+  AppStateData build() => AppStateData();
 
   Future<void> initialize() async {
     final user = await UserStorage.load();
 
     state = state.copyWith(
       user: user,
-      state: user == null
-          ? AppState.welcome
-          : AppState.home,
+      state: user == null ? AppState.welcome : AppState.home,
     );
   }
 
@@ -28,8 +25,16 @@ class AppStateDataProvider extends Notifier<AppStateData> {
     state = state.copyWith(user: user);
   }
 
+  Future<void> resetUser() async {
+    state = state.copyWith(state: AppState.loading, user: null);
+
+    await UserStorage.delete();
+
+    state = state.copyWith(state: AppState.createUser);
+  }
 }
 
-final appStateDataProvider = NotifierProvider<AppStateDataProvider, AppStateData>(
-  AppStateDataProvider.new,
-);
+final appStateDataProvider =
+    NotifierProvider<AppStateDataProvider, AppStateData>(
+      AppStateDataProvider.new,
+    );
