@@ -1,3 +1,5 @@
+import 'package:attention/gui/pages/debug_activity_chooser_page.dart';
+import 'package:attention/gui/pages/in_session_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -86,6 +88,8 @@ class _AttentionAppState extends ConsumerState<AttentionApp> {
         AppState.home => HomePage(),
         AppState.welcome => SignInPage(),
         AppState.createUser => SignInPage(),
+        AppState.selectActivity => DebugActivityChooserPage(),
+        AppState.inSession => InSessionPage(),
       },
     );
   }

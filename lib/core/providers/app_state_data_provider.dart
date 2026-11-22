@@ -1,4 +1,6 @@
+import 'package:attention/core/activities/activity.dart';
 import 'package:attention/core/app_state_data/app_state_data.dart';
+import 'package:attention/core/assessments/assessment_session.dart';
 import 'package:attention/core/enums/app_state.dart';
 import 'package:attention/core/user/user.dart';
 import 'package:attention/core/user/user_storage.dart';
@@ -31,6 +33,10 @@ class AppStateDataProvider extends Notifier<AppStateData> {
     await UserStorage.delete();
 
     state = state.copyWith(state: AppState.createUser);
+  }
+  
+  void setSession(List<Activity> activities) {
+    state = state.copyWith(session: AssessmentSession(activities: activities));
   }
 }
 

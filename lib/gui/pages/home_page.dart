@@ -1,3 +1,4 @@
+import 'package:attention/core/enums/app_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -72,7 +73,7 @@ class HomePage extends ConsumerWidget {
               spacing: 10,
               children: [
                 Text(
-                  "ATTENTION",
+                  "AS SCORE",
                   style: TextStyle(fontFamily: "Anton", fontSize: 50),
                 ),
                 Expanded(
@@ -85,7 +86,6 @@ class HomePage extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       spacing: 20,
                       children: [
-                        Text("AS Score", style: TextStyle(fontSize: 20)),
                         Text(
                           ref
                                   .read(appStateDataProvider)
@@ -109,7 +109,9 @@ class HomePage extends ConsumerWidget {
                 children: [
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        ref.read(appStateDataProvider.notifier).setState(AppState.selectActivity);
+                      },
                       style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadiusGeometry.circular(20),
