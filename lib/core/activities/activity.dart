@@ -3,6 +3,7 @@ import 'package:attention/core/activities/trial.dart';
 
 abstract class Activity {
   
+  final ActivityResult? result;
   String get id;
   String get name;
   int get setCount;
@@ -15,4 +16,6 @@ abstract class Activity {
 
   ActivityResult evaluate(List<Trial> trials);
 
+  Activity({this.result});
+  
 }

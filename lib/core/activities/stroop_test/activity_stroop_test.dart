@@ -24,10 +24,13 @@ class ActivityStroopTest extends Activity {
   int get setCount => 3;
 
   @override
-  int get trialPerSet => 15;
+  int get trialPerSet => 20;
 
   @override
   Duration? get durationPerTrial => null;
+
+  @override
+  ActivityResultStroopTest? get result => evaluate(trials);
 
   // Stroop Test Variables
 
@@ -40,7 +43,6 @@ class ActivityStroopTest extends Activity {
     Colors.green,
     Colors.blue,
     Colors.purple,
-    Colors.pink,
   ];
 
   static final Map<Color, String> _colorsName = {
@@ -50,8 +52,9 @@ class ActivityStroopTest extends Activity {
     Colors.green: "GREEN",
     Colors.blue: "BLUE",
     Colors.purple: "PURPLE",
-    Colors.pink: "PINK",
   };
+
+  static final colorCount = 4;
 
   int currentSet = 0;
   int currentTrial = 0;
@@ -65,7 +68,8 @@ class ActivityStroopTest extends Activity {
 
   Completer<TrialResponse<Color>>? _inputCompleter;
 
-  ActivityStroopTest({Random? random}) : random = random ?? Random();
+  ActivityStroopTest({Random? random, ActivityStroopTest? result})
+    : random = random ?? Random();
 
   // Gameplay
 
@@ -74,7 +78,7 @@ class ActivityStroopTest extends Activity {
     trials.clear();
     colorSets.clear();
     for (int i = 0; i < setCount; i++) {
-      colorSets.add(_generateColorsSet(4 + i));
+      colorSets.add(_generateColorsSet(colorCount));
     }
     _generateTrials();
   }
@@ -153,7 +157,7 @@ class ActivityStroopTest extends Activity {
   }
 
   @override
-  ActivityResult evaluate(List<Trial> trials) {
+  ActivityResultStroopTest evaluate(List<Trial> trials) {
     int correct = 0;
 
     double accuracy = 0;
@@ -181,7 +185,7 @@ class ActivityStroopTest extends Activity {
     accuracy = (correct / trials.length) * 100;
     averageReactionTime /= trials.length;
 
-    // Find SD for RT
+    // Find CV for RT
     for (var trial in trials) {
       trial = trial as TrialStroopTest;
       final response = trial.response;

@@ -1,6 +1,9 @@
+import 'package:attention/core/activities/stroop_test/activity_result_stroop_test.dart';
 import 'package:attention/core/activities/stroop_test/activity_stroop_test.dart';
+import 'package:attention/core/enums/app_state.dart';
 import 'package:attention/core/providers/app_state_data_provider.dart';
 import 'package:attention/gui/pages/countdown_page.dart';
+import 'package:attention/gui/widgets/reaction_time_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -12,8 +15,8 @@ class ActivityStroopTestPage extends ConsumerStatefulWidget {
       _ActivityStroopTestPageState();
 }
 
-class _ActivityStroopTestPageState extends ConsumerState<ActivityStroopTestPage> {
-
+class _ActivityStroopTestPageState
+    extends ConsumerState<ActivityStroopTestPage> {
   @override
   Widget build(BuildContext context) {
     final activity =
@@ -22,13 +25,15 @@ class _ActivityStroopTestPageState extends ConsumerState<ActivityStroopTestPage>
     if (activity.state == ActivityStateStroopTest.prepare) {
       return preparePage(activity);
     } else if (activity.state == ActivityStateStroopTest.countdown) {
-      return CountdownPage(onComplete: () {
-        setState(() {
-          activity.state = ActivityStateStroopTest.ingame;
-        });
-      });
+      return CountdownPage(
+        onComplete: () {
+          setState(() {
+            activity.state = ActivityStateStroopTest.ingame;
+          });
+        },
+      );
     } else if (activity.isCompleted) {
-      return resultPage();
+      return resultPage(activity);
     } else {
       return gamePage(activity);
     }
@@ -54,10 +59,6 @@ class _ActivityStroopTestPageState extends ConsumerState<ActivityStroopTestPage>
                   "${(activity.trialPerSet).toString()} trials",
                   style: TextStyle(fontSize: 20, fontStyle: FontStyle.italic),
                 ),
-                Text(
-                  "${(activity.colorSets[activity.currentSet].length).toString()} colours",
-                  style: TextStyle(fontSize: 20, fontStyle: FontStyle.italic),
-                ),
               ],
             ),
             Text(
@@ -66,7 +67,7 @@ class _ActivityStroopTestPageState extends ConsumerState<ActivityStroopTestPage>
           ],
         ),
         SizedBox(
-          height: 350,
+          height: 250,
           child: Column(
             spacing: 10,
             children: [
@@ -116,17 +117,12 @@ class _ActivityStroopTestPageState extends ConsumerState<ActivityStroopTestPage>
           "Set ${activity.currentSet + 1} Trial ${activity.currentTrial + 1}",
         ),
         Container(
-          color: activity.trials[activity.currentTrialIndex].displayColor,
-          constraints: BoxConstraints.tight(Size(300, 300)),
+          constraints: BoxConstraints.tight(Size(300, 150)),
           child: Center(
             child: Text(
               "${activity.colorsName[activity.trials[activity.currentTrialIndex].wordColor]}",
               style: TextStyle(
-                color:
-                    activity.trials[activity.currentTrialIndex].displayColor ==
-                        Colors.yellow
-                    ? Theme.of(context).colorScheme.tertiary
-                    : Colors.white,
+                color: activity.trials[activity.currentTrialIndex].displayColor,
                 fontFamily: "Anton",
                 fontSize: 60,
               ),
@@ -134,7 +130,7 @@ class _ActivityStroopTestPageState extends ConsumerState<ActivityStroopTestPage>
           ),
         ),
         SizedBox(
-          height: 350,
+          height: 250,
           child: Column(
             spacing: 10,
             children: [
@@ -163,11 +159,77 @@ class _ActivityStroopTestPageState extends ConsumerState<ActivityStroopTestPage>
   }
 
   // TODO Stroop Test Result Page
-  Column resultPage() {
+  Column resultPage(ActivityStroopTest activity) {
+    final ActivityResultStroopTest? result = activity.result;
+    if (result == null) {
+      throw StateError("There's no result of this activity");
+    }
+    final double rtConsistencyAdjusted = 100 - (result.rtConsistency * 100);
+    List<int> reactionTimeData = [];
+    for (var trial in activity.trials) {
+      reactionTimeData.add(trial.response!.reactionTime!.inMilliseconds);
+    }
     return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      spacing: 150,
       children: [
-        Icon(Icons.check, size: 100,),
-        Text("game finished yay yay")
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("RESULT", style: TextStyle(fontFamily: "Anton", fontSize: 50)),
+            Divider(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Answer Accuracy"),
+                Text(
+                  "${result.accuracy.toStringAsPrecision(4)}% (${result.correct}/${activity.trials.length})",
+                ),
+              ],
+            ),
+            // for (var trial in activity.trials)
+            //   Builder(builder: (context) {
+            //     debugPrint("${trial.response!.reactionTime!.inMilliseconds}");
+            //     return Text("${trial.response!.reactionTime!.inMilliseconds}");
+            //   },),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Average Reaction Time"),
+                Text("${result.averageReactionTime.toStringAsPrecision(5)} ms"),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Reaction Time Consistency"),
+                Text("${rtConsistencyAdjusted.toStringAsPrecision(4)}%"),
+              ],
+            ),
+            ReactionTimeChart(reactionTimes: reactionTimeData)
+          ],
+        ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [           
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  ref.read(appStateDataProvider.notifier).setState(AppState.home);
+                });
+              },
+              style: ElevatedButton.styleFrom(
+                fixedSize: Size(300, 50),
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Theme.of(context).colorScheme.secondary,
+              ),
+              child: Text(
+                "CONTINUE",
+                style: TextStyle(fontSize: 30, fontFamily: "Anton"),
+              ),
+            ),
+          ],
+        ),        
       ],
     );
   }
